@@ -1,3 +1,4 @@
+# Flask Deployment and Service
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,14 +15,14 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: flask-app:latest
+        image: ghcr.io/aldentaye/python-mq-demo:main
         ports:
         - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: flask-app
+  name: flask-service
 spec:
   selector:
     app: flask-app
@@ -29,3 +30,58 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
+
+# Nginx Deployment, ConfigMap, and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+
+        location / {
+            proxy_pass http://flask-service;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
