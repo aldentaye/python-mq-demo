@@ -1,11 +1,9 @@
 import pika 
 
 connection_params = pika.ConnectionParameters(
-    host='localhost',  # Change this if your RabbitMQ server is on a different host
-    port=15672,          # Default RabbitMQ port
-    protocol=pika.spec.PUBLISHER_CONFIRM_PROTOCOL,
-    credentials=pika.PlainCredentials('user', 'SDnUEeh00Ulrl0Gl'),
-)
+        host='localhost',                     
+        port=5672,                             
+    )
 connection = pika.BlockingConnection(connection_params)
 channel = connection.channel()
 
