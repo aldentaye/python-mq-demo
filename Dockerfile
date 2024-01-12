@@ -3,9 +3,9 @@ FROM python:3.8-slim
 
 COPY . /app
 
-RUN ls -l
-
 WORKDIR /app
+
+RUN ls -l
 
 RUN pip install -r requirements.txt
 
