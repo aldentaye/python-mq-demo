@@ -5,7 +5,9 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install -r requirements.txt
+CMD ["ls", "-l"]
+
+# RUN pip install -r requirements.txt
 
 EXPOSE 80
 
