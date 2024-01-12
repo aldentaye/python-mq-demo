@@ -7,7 +7,7 @@ WORKDIR /app
 
 RUN ls -l
 
-RUN pip install -r requirements.txt
+RUN pip install -r ./app/requirements.txt
 
 EXPOSE 80
 
