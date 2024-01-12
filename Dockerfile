@@ -1,13 +1,13 @@
 # Use an official Python runtime as a parent image
 FROM python:3.8-slim
 
-WORKDIR /app
-
 COPY . /app
 
 RUN ls -l
 
-# RUN pip install -r requirements.txt
+WORKDIR /app
+
+RUN pip install -r requirements.txt
 
 EXPOSE 80
 
