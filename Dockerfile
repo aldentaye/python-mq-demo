@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY . /app
 
-CMD ["ls", "-l"]
+RUN ls -l
 
 # RUN pip install -r requirements.txt
 
