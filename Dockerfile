@@ -1,10 +1,8 @@
-# Use an official Python runtime as a parent image
 FROM --platform=linux/amd64 python:3.9-slim
 
+RUN mkdir /app
 WORKDIR /app
-
-COPY ./app /app
-
+COPY ./app .
 RUN ls -l
 
 RUN pip install -r requirements.txt
