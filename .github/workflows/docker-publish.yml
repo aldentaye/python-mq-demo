@@ -21,6 +21,13 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
+strategy:
+  matrix:
+    platforms:
+      - ubuntu-20.04
+      - windows-latest
+      - macos-latest
+
 
 jobs:
   build:
@@ -77,6 +84,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
+          platforms: ${{ matrix.platforms }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
