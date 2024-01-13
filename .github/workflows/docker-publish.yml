@@ -24,12 +24,8 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.platforms }}
-    strategy:
-      matrix:
-        platforms:
-          - ubuntu-latest
-          - windows-latest
-          - macos-latest
+    matrix:
+        platform: [linux/amd64, linux/arm64]
     # runs-on: ubuntu-latest
     permissions:
       contents: read
