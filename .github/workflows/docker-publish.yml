@@ -24,7 +24,8 @@ env:
 jobs:
   build:
     runs-on: ${{ matrix.platforms }}
-    matrix:
+    strategy: 
+      matrix:
         platform: [linux/amd64, linux/arm64]
     # runs-on: ubuntu-latest
     permissions:
