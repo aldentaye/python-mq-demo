@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.9-slim
+FROM arm64v8/python:3.9-slim
 
 RUN mkdir /app
 WORKDIR /app
