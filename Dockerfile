@@ -1,9 +1,9 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
-
-COPY ./app /app
+FROM --platform=linux/amd64 python:3.9-slim
 
 WORKDIR /app
+
+COPY ./app /app
 
 RUN ls -l
 
