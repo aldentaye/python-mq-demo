@@ -21,18 +21,16 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-strategy:
-  matrix:
-    platforms:
-      - ubuntu-20.04
-      - windows-latest
-      - macos-latest
-
-
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.platforms }}
+    strategy:
+      matrix:
+        platforms:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    # runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
