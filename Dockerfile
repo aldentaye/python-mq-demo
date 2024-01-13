@@ -1,6 +1,5 @@
-FROM arm64v8/python:3.9-slim
+FROM python:3.9-alpine
 
-RUN mkdir /app
 WORKDIR /app
 COPY ./app .
 RUN ls -l
