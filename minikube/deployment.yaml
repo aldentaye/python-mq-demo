@@ -1,4 +1,4 @@
-# Flask Deployment and Service
+# flask deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +18,11 @@ spec:
         image: ghcr.io/aldentaye/python-mq-demo:main
         ports:
         - containerPort: 5000
+      imagePullSecrets:
+      - name: ghcrpull
+
 ---
+# flask service
 apiVersion: v1
 kind: Service
 metadata:
@@ -31,57 +35,78 @@ spec:
       port: 80
       targetPort: 5000
 
-# Nginx Deployment, ConfigMap, and Service
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: nginx-deployment
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: nginx
-#   template:
-#     metadata:
-#       labels:
-#         app: nginx
-#     spec:
-#       containers:
-#       - name: nginx
-#         image: nginx:latest
-#         ports:
-#         - containerPort: 80
-#         volumeMounts:
-#         - name: nginx-config
-#           mountPath: /etc/nginx/conf.d
-# ---
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: nginx-config
-# data:
-#   nginx.conf: |
-#     server {
-#         listen 80;
-#         server_name localhost;
+---
+# nginx configmap 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    worker_processes 1;
 
-#         location / {
-#             proxy_pass http://flask-service;
-#             proxy_set_header Host $host;
-#             proxy_set_header X-Real-IP $remote_addr;
-#             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#             proxy_set_header X-Forwarded-Proto $scheme;
-#         }
-#     }
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: nginx-service
-# spec:
-#   selector:
-#     app: nginx
-#   ports:
-#     - protocol: TCP
-#       port: 80
-#       targetPort: 80
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        upstream flask-app {
+            server flask-service:80;
+        }
+
+        server {
+            listen 80;
+
+            location / {
+                proxy_pass http://flask-app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
+        }
+    }
+
+---
+# nginx deployment 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest 
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+
+---
+# nginx service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

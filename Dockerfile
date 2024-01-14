@@ -6,7 +6,6 @@ RUN ls -l
 
 RUN pip install -r requirements.txt
 
-EXPOSE 80
-
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+

@@ -8,6 +8,8 @@ flask:
   image:
     repository: your-registry/flask-app
     tag: v1
+    
+registrySecretName: ghcrpull
 
 rabbitmq:
   username: guest
