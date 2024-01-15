@@ -12,15 +12,15 @@ RABBITMQ_QUEUE = 'message_queue'
 
 start_time = None
 
-@app.before_first_request
-def build_time():
+@app.before_request
+def build_start():
     global start_time
     start_time = datetime.now(pytz.timezone('America/New_York')) 
     return start_time
 
 @app.route('/')
 def home():
-    return render_template('index.html', build=build_time())
+    return render_template('index.html', build_start=build_start())
 
 @app.route('/send_message')
 def send_message():
