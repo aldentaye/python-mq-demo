@@ -15,12 +15,12 @@ start_time = None
 @app.before_request
 def build_start():
     global start_time
-    start_time = datetime.now(pytz.timezone('America/New_York')).strftime("%Y-%m-%d %H:%M:%S")
+    start_time = datetime.now(pytz.timezone('America/New_York'))
     return start_time
 
 @app.route('/')
 def home():
-    return render_template('index.html', build_start=build_start())
+    return render_template('index.html', build_start=start_time.strftime("%I:%M %p"))
 
 @app.route('/send_message')
 def send_message():
