@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flask-chart.fullname" . }}-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "flask-chart.name" . }}-grafana
+  template:
+    metadata:
+      labels:
+        app: {{ include "flask-chart.name" . }}-grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+

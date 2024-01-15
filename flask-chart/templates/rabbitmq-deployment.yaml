@@ -1,25 +1,24 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "flask-chart.fullname" . }}-rabbitmq
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ include "flask-chart.fullname" . }}-rabbitmq-headless
   selector:
     matchLabels:
-      app: rabbitmq
+      app: {{ include "flask-chart.name" . }}-rabbitmq
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: {{ include "flask-chart.name" . }}-rabbitmq
     spec:
       containers:
       - name: rabbitmq
-        image: rabbitmq:3.8
+        image: "{{ .Values.rabbitmq.image.repository }}:{{ .Values.rabbitmq.image.tag }}"
         ports:
         - containerPort: 5672
-        - containerPort: 15672  # RabbitMQ Management UI
-        env:
-        - name: RABBITMQ_DEFAULT_USER
-          value: {{ .Values.rabbitmq.username | quote }}
-        - name: RABBITMQ_DEFAULT_PASS
-          value: {{ .Values.rabbitmq.password | quote }}
+          name: amqp
+        - containerPort: 15672
+          name: management
+

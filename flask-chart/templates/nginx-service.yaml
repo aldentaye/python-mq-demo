@@ -4,8 +4,10 @@ metadata:
   name: {{ include "flask-chart.fullname" . }}-nginx-service
 spec:
   selector:
-    app: nginx
+    app: {{ include "flask-chart.name" . }}-nginx
   ports:
   - protocol: TCP
     port: 80
     targetPort: 80
+  type: LoadBalancer
+

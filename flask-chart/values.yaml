@@ -12,7 +12,12 @@ flask:
 registrySecretName: ghcrpull
 
 rabbitmq:
-  username: guest
-  password: guest
+  image:
+    repository: "rabbitmq"
+    tag: "3-management"
+    pullPolicy: IfNotPresent
 
-
+service:
+  type: LoadBalancer
+  port: 5672
+  managementPort: 15672

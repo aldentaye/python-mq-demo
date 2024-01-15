@@ -6,16 +6,16 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: flask-app
+      app: {{ include "flask-chart.name" . }}
   template:
     metadata:
       labels:
-        app: flask-app
+        app: {{ include "flask-chart.name" . }}
     spec:
       containers:
       - name: flask-app
-        image: {{ .Values.flask.image.repository }}:{{ .Values.flask.image.tag }}
+        image: ghcr.io/aldentaye/python-mq-demo:main
         ports:
         - containerPort: 5000
       imagePullSecrets:
-      - name: {{ .Values.registrySecretName }}
+      - name: ghcrpull

@@ -6,17 +6,23 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: {{ include "flask-chart.name" . }}-nginx
   template:
     metadata:
       labels:
-        app: nginx
+        app: {{ include "flask-chart.name" . }}-nginx
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: nginx:latest 
         ports:
         - containerPort: 80
         volumeMounts:
         - name: nginx-config
-          mountPath: /etc/nginx/conf.d
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: {{ include "flask-chart.fullname" . }}-nginx-config
+

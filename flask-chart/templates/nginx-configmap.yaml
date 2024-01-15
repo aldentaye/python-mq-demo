@@ -4,15 +4,55 @@ metadata:
   name: {{ include "flask-chart.fullname" . }}-nginx-config
 data:
   nginx.conf: |
-    server {
-        listen 80;
-        server_name localhost;
+    worker_processes 1;
 
-        location / {
-            proxy_pass http://{{ include "flask-chart.fullname" . }}-service;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
+    events {
+        worker_connections 1024;
+    }
+
+    http {
+        upstream flask-app {
+            server {{ include "flask-chart.fullname" . }}-flask-service:80;
+        }
+
+        upstream rabbitmq {
+            server {{ include "flask-chart.fullname" . }}-rabbitmq-service:5672;  
+        }
+
+         upstream grafana {
+            server {{ include "flask-chart.fullname" . }}-grafana-service:3000;
+        }
+
+        upstream prometheus {
+            server {{ include "flask-chart.fullname" . }}-prometheus-service:9090;
+        }
+
+        server {
+            listen 80;
+
+            location / {
+                proxy_pass http://flask-app;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
+
+            location /rabbitmq {
+                proxy_pass http://rabbitmq;
+            }
+
+            location /grafana/ {
+                proxy_pass http://grafana/;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
+
+            location /prometheus/ {
+                proxy_pass http://prometheus/;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            }
         }
     }
