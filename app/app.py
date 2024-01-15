@@ -15,7 +15,7 @@ start_time = None
 @app.before_request
 def build_start():
     global start_time
-    start_time = datetime.now(pytz.timezone('America/New_York')) 
+    start_time = datetime.now(pytz.timezone('America/New_York')).strftime("%Y-%m-%d %H:%M:%S")
     return start_time
 
 @app.route('/')
