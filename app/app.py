@@ -4,7 +4,7 @@ import pika
 app = Flask(__name__)
 
 # RabbitMQ Connection Parameters
-RABBITMQ_HOST = 'rabbitmq-service'
+RABBITMQ_HOST = 'localhost'
 RABBITMQ_PORT = 5672
 RABBITMQ_QUEUE = 'message_queue'
 
