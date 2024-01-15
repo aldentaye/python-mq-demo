@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: ghcr.io/aldentaye/python-mq-demo:main
+        image: {{ .Values.flask.image.repository }}
         ports:
         - containerPort: 5000
       imagePullSecrets:

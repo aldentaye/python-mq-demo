@@ -6,7 +6,7 @@ replicaCount: 1
 
 flask:
   image:
-    repository: your-registry/flask-app
+    repository: ghcr.io/aldentaye/python-mq-demo:main
     tag: v1
     
 registrySecretName: ghcrpull
