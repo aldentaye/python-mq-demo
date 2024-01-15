@@ -15,6 +15,7 @@ spec:
       containers:
       - name: flask-app
         image: {{ .Values.flask.image.repository }}
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
       imagePullSecrets:
