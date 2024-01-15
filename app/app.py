@@ -1,4 +1,6 @@
 from flask import Flask, render_template, redirect, url_for
+from datetime import datetime
+import pytz
 import pika
 
 app = Flask(__name__)
@@ -8,9 +10,17 @@ RABBITMQ_HOST = 'localhost'
 RABBITMQ_PORT = 5672
 RABBITMQ_QUEUE = 'message_queue'
 
+start_time = None
+
+@app.before_first_request
+def build_time():
+    global start_time
+    start_time = datetime.now(pytz.timezone('America/New_York')) 
+    return start_time
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', build=build_time())
 
 @app.route('/send_message')
 def send_message():
