@@ -6,25 +6,13 @@ import pika
 app = Flask(__name__)
 
 # RabbitMQ Connection Parameters
-RABBITMQ_HOST = 'localhost'
+RABBITMQ_HOST = 'rabbitmq-service'
 RABBITMQ_PORT = 5672
 RABBITMQ_QUEUE = 'message_queue'
 
-start_time = None
-
-@app.before_request
-def build_start():
-    global start_time
-    if start_time is None:
-        start_time = datetime.now(pytz.timezone('America/New_York'))
-        print(f"Flask app started at: {start_time}")
-
 @app.route('/')
 def home():
-    global start_time
-    formatted_start_time = start_time.strftime("%I:%M %p")
-
-    return render_template('index.html', build_start=formatted_start_time)
+    return render_template('index.html')
 
 @app.route('/send_message')
 def send_message():
