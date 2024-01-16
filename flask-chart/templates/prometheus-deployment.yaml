@@ -20,4 +20,11 @@ spec:
             - "--storage.tsdb.path=/prometheus"
           ports:
             - containerPort: 9090
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-configmap
+            items:
+              - key: prometheus.yml
+                path: prometheus.yml
 
