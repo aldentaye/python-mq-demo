@@ -8,14 +8,11 @@ data:
         scrape_interval: 15s
         
     scrape_configs:
-      - job_name: 'flask-app'
-        static_configs:
-          - targets: ['{{ include "flask-chart.fullname" . }}-flask-app-service:5000']
+      # - job_name: 'flask-app'
+      #   static_configs:
+      #     - targets: ['{{ include "flask-chart.fullname" . }}-flask-app-service:5000']
 
       - job_name: 'nginx'
         static_configs:
           - targets: ['{{ include "flask-chart.fullname" . }}-nginx-service:80']
 
-      - job_name: 'rabbitmq'
-        static_configs:
-          - targets: ['{{ include "flask-chart.fullname" . }}-rabbitmq-service:15672']

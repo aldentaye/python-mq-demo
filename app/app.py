@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 import pika
 
 app = Flask(__name__)
@@ -8,9 +9,19 @@ RABBITMQ_HOST = 'rabbitmq-service'
 RABBITMQ_PORT = 5672
 RABBITMQ_QUEUE = 'message_queue'
 
+requests_total = Counter('app_requests_total', 'Total number of requests')
+request_duration = Histogram('app_request_duration_seconds', 'Request duration in seconds')
+
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    requests_total.inc()
+    # Record the duration of the request
+    with request_duration.time():
+        return render_template('index.html')
+
+@app.route('/metrics')
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 @app.route('/send_message', methods=['GET', 'POST'])
 def send_message():
@@ -29,6 +40,7 @@ def send_message():
         return f"Error: {str(e)}"
 
     return redirect(url_for('home'))
+
 
 # @app.route('/release_message')
 # def release_message():
