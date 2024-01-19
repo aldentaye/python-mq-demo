@@ -21,6 +21,7 @@ def home():
         return render_template('index.html')
 
 @app.route('/metrics')
+def metrics():
     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 @app.route('/send_message', methods=['GET', 'POST'])
