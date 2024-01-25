@@ -14,7 +14,7 @@ request_duration = Histogram('app_request_duration_seconds', 'Request duration i
 
 def check_rabbitmq_connection():
     try:
-        connection = pika.BlockingConnection(rpika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT))
         connection.close()
         return True
     except Exception as e:
