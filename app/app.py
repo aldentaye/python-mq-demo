@@ -5,24 +5,36 @@ import pika
 app = Flask(__name__)
 
 # RabbitMQ Connection Parameters
-RABBITMQ_HOST = 'rabbitmq-service'
+RABBITMQ_HOST = 'flask-app-flask-chart-rabbitmq-service'
 RABBITMQ_PORT = 5672
 RABBITMQ_QUEUE = 'message_queue'
 
 requests_total = Counter('app_requests_total', 'Total number of requests')
 request_duration = Histogram('app_request_duration_seconds', 'Request duration in seconds')
 
+def check_rabbitmq_connection():
+    try:
+        connection = pika.BlockingConnection(rpika.ConnectionParameters(host=RABBITMQ_HOST, port=RABBITMQ_PORT))
+        connection.close()
+        return True
+    except Exception as e:
+        print(f"Error connecting to RabbitMQ: {e}")
+        return False
+
 
 @app.route('/')
 def home():
+    rabbitmq_status = "Connected" if check_rabbitmq_connection() else "Not Connected"
     requests_total.inc()
     # Record the duration of the request
     with request_duration.time():
-        return render_template('index.html')
+        return render_template('index.html', rabbitmq_status=rabbitmq_status)
+
 
 @app.route('/metrics')
 def metrics():
     return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
 
 @app.route('/send_message', methods=['GET', 'POST'])
 def send_message():
@@ -68,6 +80,7 @@ def send_message():
 #         return f"Error: {str(e)}"
 
 #     return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Welcome!</h1>
+    <p>Connection Status: {{ rabbitmq_status }}</p>
     <form action="/send_message" method="post">
         <label for="message">Enter message to send to queue:</label>
         <input type="text" id="message" name="message" required>
