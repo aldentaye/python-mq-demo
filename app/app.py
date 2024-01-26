@@ -4,13 +4,18 @@ import pika
 
 app = Flask(__name__)
 
-# RabbitMQ Connection Parameters
 RABBITMQ_HOST = 'flask-app-flask-chart-rabbitmq-service'
 RABBITMQ_PORT = 5672
 RABBITMQ_QUEUE = 'message_queue'
 
 requests_total = Counter('app_requests_total', 'Total number of requests')
 request_duration = Histogram('app_request_duration_seconds', 'Request duration in seconds')
+
+
+@app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
 
 def check_rabbitmq_connection():
     try:
@@ -29,11 +34,6 @@ def home():
     # Record the duration of the request
     with request_duration.time():
         return render_template('index.html', rabbitmq_status=rabbitmq_status)
-
-
-@app.route('/metrics')
-def metrics():
-    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 
 @app.route('/send_message', methods=['GET', 'POST'])
